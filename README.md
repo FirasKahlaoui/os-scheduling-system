@@ -4,7 +4,7 @@ A C project for simulating process scheduling policies (FIFO, Round-Robin, Prior
 
 ---
 
-## 🧑‍💻 Team Members (Groupe 1-1ING1)
+## 🧑‍💻 Team Members (The Sudoers Group - 1ING3)
 
 1. **Firas Kahlaoui** (Scrum Master)
 2.
