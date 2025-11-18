@@ -1,6 +1,6 @@
 # Linux Process Scheduler Simulator
 
-A C project for simulating process scheduling policies (FIFO, Round-Robin, Priority) for the Operating Systems course at ISI.
+A C project for simulating process scheduling policies (FIFO, Round-Robin, Priority) for the Advanced Operating Systems course at ISI.
 
 ---
 
