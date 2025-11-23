@@ -11,5 +11,8 @@ typedef struct{         //creates a structes that holds all the information need
 
 Scheduler* load_processes_from_file(const char* filename);
 void fifo_scheduler(Scheduler* scheduler); //
+void round_robin_sheduler(Sheduler* sheduler); //serait implémenté plus tard 
+void preemptive_priority_sheduler(Sheduler* sheduler),//serait implémenté plus tard 
+void evaluate_metrics(Sheduler* sheduler); // c'est une fonction qui evalue les performances de l'execution 
 
 #endif
