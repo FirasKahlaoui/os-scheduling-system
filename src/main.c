@@ -8,15 +8,14 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // Load the processes from the file
     Scheduler* scheduler = load_processes_from_file(argv[1]);
 
     if (scheduler == NULL) {
-        printf("Failed to load\n", argv[1]);
+        printf("Failed to load %s\n", argv[1]);
         return 1;
     }
 
-    printf("Successfully loaded\n", scheduler->processCount);
+    printf("Successfully loaded %d processes\n", scheduler->processCount);
     for (int i = 0; i < scheduler->processCount; i++) {
         printf("  Process %d: %s (Arrive at: %d, Eexecution_time: %d, Priority: %d)\n",
                i + 1,
@@ -25,7 +24,35 @@ int main(int argc, char* argv[]) {
                scheduler->processes[i].executionTime,
                scheduler->processes[i].priority);
     }
-    fifo_scheduler(scheduler);
+
+    // Menu to choose algorithm
+    printf("\nChoose scheduling algorithm:\n");
+    printf("  1) FIFO (First-In-First-Out)\n");
+    printf("  2) Round-Robin\n");
+    printf("Enter choice (1 or 2): ");
+
+    int choice = 0;
+    if (scanf("%d", &choice) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        /* fall through to cleanup below */
+    } else if (choice == 1) {
+        fifo_scheduler(scheduler);
+    } else if (choice == 2) {
+        printf("Enter time quantum (positive integer): ");
+        int quantum = 0;
+        if (scanf("%d", &quantum) != 1 || quantum <= 0) {
+            fprintf(stderr, "Invalid quantum\n");
+        } else {
+            round_robin_scheduler(scheduler, quantum);
+        }
+    } else {
+        fprintf(stderr, "Unknown choice\n");
+    }
+
+    /* proper cleanup: free each process name, the array, then the Scheduler */
+    for (int i = 0; i < scheduler->processCount; ++i) {
+        free(scheduler->processes[i].name);
+    }
     free(scheduler->processes);
     free(scheduler);
 
