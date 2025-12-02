@@ -29,25 +29,37 @@ int main(int argc, char* argv[]) {
     printf("\nChoose scheduling algorithm:\n");
     printf("  1) FIFO (First-In-First-Out)\n");
     printf("  2) Round-Robin\n");
-    printf("Enter choice (1 or 2): ");
+    printf("  3) Preemptive Priority\n");
+    printf("Enter choice (1 or 2 or 3): ");
 
-    int choice = 0;
+        int choice = 0;
     if (scanf("%d", &choice) != 1) {
         fprintf(stderr, "Invalid input\n");
-        /* fall through to cleanup below */
-    } else if (choice == 1) {
+    }
+
+    else if (choice == 1) {
         fifo_scheduler(scheduler);
-    } else if (choice == 2) {
+    }
+
+    else if (choice == 2) {
         printf("Enter time quantum (positive integer): ");
         int quantum = 0;
+
         if (scanf("%d", &quantum) != 1 || quantum <= 0) {
             fprintf(stderr, "Invalid quantum\n");
         } else {
             round_robin_scheduler(scheduler, quantum);
         }
-    } else {
+    }
+
+    else if (choice == 3) {
+        priority_preemptive_scheduler(scheduler);
+    }
+
+    else {
         fprintf(stderr, "Unknown choice\n");
     }
+
 
     /* proper cleanup: free each process name, the array, then the Scheduler */
     for (int i = 0; i < scheduler->processCount; ++i) {
