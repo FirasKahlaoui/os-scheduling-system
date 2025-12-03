@@ -45,3 +45,4 @@ test:
 	./$(EXEC) config_examples/test2.conf RoundRobin 4
 
 .PHONY: all install clean run test
+# Improved rules
