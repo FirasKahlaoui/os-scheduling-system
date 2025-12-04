@@ -126,7 +126,7 @@ void update_graphical_display(process_t processes[], int n, int current_time, in
         attron(COLOR_PAIR(color));
         if (i == running_idx) attron(A_BOLD);
         
-        mvprintw(4 + i, 3, "%-5d %-9s %-6d %-5d %-7d %-5d %-10s", 
+        mvprintw(4 + i, 3, "% -5d %-9s %-6d %-5d %-7d %-5d %-10s", 
             i, processes[i].name, processes[i].priority, 
             processes[i].arrival_time, processes[i].burst_time, 
             processes[i].remaining_time, state_str);
