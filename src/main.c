@@ -25,12 +25,22 @@ int main(int argc, char* argv[]) {
                scheduler->processes[i].executionTime,
                scheduler->processes[i].priority);
     }
-    fifo_scheduler(scheduler);
-    printf("donnez le quantum ");
-    int a=5;
-    round_robin_scheduler(scheduler,a);
+    int request=0,a;
+    
+    do{printf("please choose between these schedulers \n 0 to exit \n 1 for Fifo \n 2 for Round Robin \n :");
+        scanf("%d",&request);
+        if(request==1)
+        {
+        fifo_scheduler(scheduler);printf("\n");
+        }
+    if(request==2)
+        {
+        printf("donnez le quantum \n ");
+        scanf("%d",&a);
+        round_robin_scheduler(scheduler,a);printf("\n");
+        }    
+    }while(request!=0);
     free(scheduler->processes);
     free(scheduler);
-
     return 0;
 }
