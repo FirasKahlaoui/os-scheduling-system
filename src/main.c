@@ -12,11 +12,11 @@ int main(int argc, char* argv[]) {
     Scheduler* scheduler = load_processes_from_file(argv[1]);
 
     if (scheduler == NULL) {
-        printf("Failed to load\n", argv[1]);
+        printf("Failed to load %s\n", argv[1]);
         return 1;
     }
 
-    printf("Successfully loaded\n", scheduler->processCount);
+    printf("Successfully loaded %d\n", scheduler->processCount);
     for (int i = 0; i < scheduler->processCount; i++) {
         printf("  Process %d: %s (Arrive at: %d, Eexecution_time: %d, Priority: %d)\n",
                i + 1,
@@ -26,6 +26,9 @@ int main(int argc, char* argv[]) {
                scheduler->processes[i].priority);
     }
     fifo_scheduler(scheduler);
+    printf("donnez le quantum ");
+    int a=5;
+    round_robin_scheduler(scheduler,a);
     free(scheduler->processes);
     free(scheduler);
 
