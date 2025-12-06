@@ -25,7 +25,7 @@ This project implements a multi-task process scheduler on Linux, capable of mana
 ## Project Structure
 
 ```text
-GroupeX-1ING1/
+os-scheduling-system/
 ├── src/            # Source files (main, scheduler, display, etc.)
 ├── policies/       # Scheduling policies implementation
 ├── include/        # Headers
