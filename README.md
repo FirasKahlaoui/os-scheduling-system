@@ -8,9 +8,9 @@ A C project for simulating process scheduling policies (FIFO, Round-Robin, Prior
 
 1. **Firas Kahlaoui** (Scrum Master)
 2. **Oussema Abdelmoumen** (Developer)
-3.  **Hamza Bargoug** (Developer)
-4.  **Seifeddine Ben fredj** (Dev)
-5.  Malek Nasri (devleoper)
+3. **Hamza Bargoug** (Developer)
+4. **Seifeddine Ben fredj** (Dev)
+5. **Malek Nasri** (devleoper)
 
 ## 🛠️ How to Build
 
