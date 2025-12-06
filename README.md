@@ -20,4 +20,3 @@ A C project for simulating process scheduling policies (FIFO, Round-Robin, Prior
     git clone https://github.com/FirasKahlaoui/os-scheduling-system
     cd os-scheduling-system
     ```
-<!-- final version: build, run, demo, badges -->

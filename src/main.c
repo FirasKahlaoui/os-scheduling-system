@@ -145,5 +145,3 @@ int main(int argc, char *argv[]) {
     free(processes);
     return EXIT_SUCCESS;
 }
-// Dynamic policy menu added
-// final CLI: --quantum --policy --help

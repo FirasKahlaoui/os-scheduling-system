@@ -1,6 +1,6 @@
 # Technical Report - Multi-task Scheduler
 
-**Group:** GroupeX-1ING1
+**Group:** The Sudoers Group - 1ING3
 
 **Date:** December 2025
 
