@@ -74,7 +74,12 @@ int main(int argc, char *argv[]) {
             
             input[strcspn(input, "\n")] = 0;
             
-            if (strlen(input) == 0) continue;
+            if (strlen(input) == 0) {
+                printf("Defaulting to FIFO.\n");
+                choice = 1;
+                valid_choice = 1;
+                continue;
+            }
 
             
             if (input[0] == '?' || strncasecmp(input, "help", 4) == 0) {

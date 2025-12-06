@@ -94,6 +94,7 @@ void multilevel_schedule(process_t processes[], int n, int quantum) {
                 processes[idx].waiting_time = processes[idx].turnaround_time - processes[idx].burst_time;
                 completed++;
                 
+                update_visualization(processes, n, current_time, -1);
             }
         } else {
             
