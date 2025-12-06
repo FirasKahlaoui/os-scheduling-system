@@ -1,35 +1,23 @@
-#include <stdlib.h>
 #include <stdio.h>
-#include "../include/process.h"
+#include <string.h>
+#include "process.h"
 
-Queue* createQueue() {
-    Queue* q = (Queue*)malloc(sizeof(Queue));
-    q->head = q->tail = NULL;
-    return q;
+void init_process(process_t *p, const char *name, int arrival, int burst, int priority) {
+    strncpy(p->name, name, sizeof(p->name) - 1);
+    p->name[sizeof(p->name) - 1] = '\0';
+    p->arrival_time = arrival;
+    p->burst_time = burst;
+    p->priority = priority;
+    p->remaining_time = burst;
+    p->waiting_time = 0;
+    p->turnaround_time = 0;
+    p->completion_time = 0;
+    p->start_time = -1;
+    p->queue_level = 0;
+    p->state = READY;
 }
 
-void enqueue(Queue* q, Process* p) {
-    Node* newNode = (Node*)malloc(sizeof(Node));
-    newNode->process = p;
-    newNode->next = NULL;
-
-    if (q->tail == NULL) {
-        q->head = q->tail = newNode;
-        return;
-    }
-    q->tail->next = newNode;
-    q->tail = newNode;
-}
-
-Process* dequeue(Queue* q) {
-    if (q->head == NULL) return NULL;
-
-    Node* temp = q->head;
-    Process* p = temp->process;
-    q->head = q->head->next;
-
-    if (q->head == NULL) q->tail = NULL;
-
-    free(temp);
-    return p;
+void print_process(const process_t *p) {
+    printf("Process %s: Arrival=%d, Burst=%d, Priority=%d, State=%d\n",
+           p->name, p->arrival_time, p->burst_time, p->priority, p->state);
 }

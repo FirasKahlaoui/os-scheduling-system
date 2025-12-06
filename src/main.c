@@ -1,72 +1,152 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "../include/scheduler.h"
+#include <string.h>
+#include <strings.h>
+#include <ctype.h>
+#include "parser.h"
+#include "scheduler.h"
+#include "display.h"
 
-int main(int argc, char* argv[]) {
-    if (argc != 2) {
-        printf("Usage: %s <config_file>\n", argv[0]);
-        return 1;
+void print_help(const char *topic) {
+    if (topic == NULL || strlen(topic) == 0) {
+        printf("\n=== Help System ===\n");
+        printf("Available commands:\n");
+        printf("  1-4           : Select a scheduling policy\n");
+        printf("  help <policy> : Get details about a specific policy (e.g., 'help fifo')\n");
+        printf("  ? <policy>    : Short for help\n");
+        printf("  exit          : Exit the program\n");
+        printf("\nAvailable policies: fifo, roundrobin, priority, multilevel\n");
+    } else if (strcasecmp(topic, "fifo") == 0) {
+        printf("\n[FIFO Help]\nFirst-In-First-Out: Processes execute in arrival order.\nNon-preemptive: Once a process starts, it runs until completion.\n");
+    } else if (strcasecmp(topic, "roundrobin") == 0 || strcasecmp(topic, "rr") == 0) {
+        printf("\n[Round-Robin Help]\nTime-sharing: Each process gets a quantum (time slice).\nPreemptive: If a process exceeds its quantum, it moves to the back of the queue.\n");
+    } else if (strcasecmp(topic, "priority") == 0) {
+        printf("\n[Priority Help]\nHighest priority runs first (Higher number = Higher priority).\nPreemptive: If a higher priority process arrives, the current one is paused.\n");
+    } else if (strcasecmp(topic, "multilevel") == 0) {
+        printf("\n[Multilevel Help]\nDynamic Priority Scheduling with Aging.\n- Processes with higher priority run first.\n- Aging: Waiting processes gain +1 priority every 10 ticks to prevent starvation.\n");
+    } else {
+        printf("\nUnknown topic: '%s'. Try 'help' for list.\n", topic);
     }
+    printf("\n");
+}
 
-    Scheduler* scheduler = load_processes_from_file(argv[1]);
-
-    if (scheduler == NULL) {
-        printf("Failed to load %s\n", argv[1]);
-        return 1;
-    }
-
-    printf("Successfully loaded %d processes\n", scheduler->processCount);
-    for (int i = 0; i < scheduler->processCount; i++) {
-        printf("  Process %d: %s (Arrive at: %d, Eexecution_time: %d, Priority: %d)\n",
-               i + 1,
-               scheduler->processes[i].name,
-               scheduler->processes[i].arrivalTime,
-               scheduler->processes[i].executionTime,
-               scheduler->processes[i].priority);
-    }
-
-    // Menu to choose algorithm
-    printf("\nChoose scheduling algorithm:\n");
+void print_menu() {
+    printf("\n=== Scheduler Menu ===\n");
     printf("  1) FIFO (First-In-First-Out)\n");
     printf("  2) Round-Robin\n");
     printf("  3) Preemptive Priority\n");
-    printf("Enter choice (1 or 2 or 3): ");
+    printf("  4) Multilevel\n");
+    printf("  ?) Help\n");
+}
 
-        int choice = 0;
-    if (scanf("%d", &choice) != 1) {
-        fprintf(stderr, "Invalid input\n");
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <config_file> [policy] [quantum]\n", argv[0]);
+        return EXIT_FAILURE;
     }
 
-    else if (choice == 1) {
-        fifo_scheduler(scheduler);
-    }
+    int num_processes;
+    process_t *processes = parse_config(argv[1], &num_processes);
+    if (!processes) return EXIT_FAILURE;
 
-    else if (choice == 2) {
-        printf("Enter time quantum (positive integer): ");
-        int quantum = 0;
+    char policy[20] = "FIFO";
+    int quantum = 2;
+    int choice = 0;
 
-        if (scanf("%d", &quantum) != 1 || quantum <= 0) {
-            fprintf(stderr, "Invalid quantum\n");
-        } else {
-            round_robin_scheduler(scheduler, quantum);
+    if (argc >= 3) {
+        
+        strncpy(policy, argv[2], 19);
+        if (argc >= 4) quantum = atoi(argv[3]);
+    } else {
+        
+        char input[256];
+        int valid_choice = 0;
+
+        while (!valid_choice) {
+            print_menu();
+            printf("Enter choice > ");
+            
+            if (!fgets(input, sizeof(input), stdin)) {
+                free(processes);
+                return EXIT_FAILURE;
+            }
+            
+            
+            input[strcspn(input, "\n")] = 0;
+            
+            if (strlen(input) == 0) {
+                printf("Defaulting to FIFO.\n");
+                choice = 1;
+                valid_choice = 1;
+                continue;
+            }
+
+            
+            if (input[0] == '?' || strncasecmp(input, "help", 4) == 0) {
+                char *arg = NULL;
+                if (input[0] == '?') {
+                    if (input[1] != '\0') arg = input + 1;
+                } else {
+                    char *space = strchr(input, ' ');
+                    if (space) arg = space + 1;
+                }
+                
+                
+                if (arg) {
+                    while(*arg == ' ') arg++;
+                    if (*arg == '\0') arg = NULL;
+                }
+                
+                print_help(arg);
+                continue;
+            }
+
+            
+            if (strcasecmp(input, "exit") == 0 || strcasecmp(input, "quit") == 0) {
+                free(processes);
+                return EXIT_SUCCESS;
+            }
+
+            
+            char *end;
+            long val = strtol(input, &end, 10);
+            if (end != input && *end == '\0' && val >= 1 && val <= 4) {
+                choice = (int)val;
+                valid_choice = 1;
+            } else {
+                printf("Invalid selection. Type '?' for help.\n");
+            }
+        }
+
+        switch(choice) {
+            case 1: strcpy(policy, "FIFO"); break;
+            case 2: 
+                strcpy(policy, "RoundRobin"); 
+                printf("Enter quantum (default 2): ");
+                if (fgets(input, sizeof(input), stdin)) {
+                    int q = atoi(input);
+                    if (q > 0) quantum = q;
+                }
+                break;
+            case 3: strcpy(policy, "Priority"); break;
+            case 4: strcpy(policy, "Multilevel"); break;
+            default: strcpy(policy, "FIFO"); break;
+        }
+
+        printf("Enable graphical visualization? (y/n): ");
+        if (fgets(input, sizeof(input), stdin)) {
+            if (input[0] == 'y' || input[0] == 'Y') {
+                set_visual_mode(true);
+            }
         }
     }
 
-    else if (choice == 3) {
-        priority_preemptive_scheduler(scheduler);
-    }
+    init_scheduler(policy);
+    
+    execute_schedule(processes, num_processes, quantum);
 
-    else {
-        fprintf(stderr, "Unknown choice\n");
-    }
+    display_results(processes, num_processes);
 
-
-    /* proper cleanup: free each process name, the array, then the Scheduler */
-    for (int i = 0; i < scheduler->processCount; ++i) {
-        free(scheduler->processes[i].name);
-    }
-    free(scheduler->processes);
-    free(scheduler);
-
-    return 0;
+    free(processes);
+    return EXIT_SUCCESS;
 }
