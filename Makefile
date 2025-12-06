@@ -47,3 +47,4 @@ test:
 .PHONY: all install clean run test
 # Improved rules
 # install target + ~/.local/bin support
+# final: make test + make clean + make install
