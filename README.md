@@ -20,3 +20,17 @@ A C project for simulating process scheduling policies (FIFO, Round-Robin, Prior
     git clone https://github.com/FirasKahlaoui/os-scheduling-system
     cd os-scheduling-system
     ```
+
+## 📂 Project Structure
+
+- **src/**: Main source code and headers.
+- **policies/**: Scheduling algorithm implementations.
+- **config_examples/**: Test configuration files.
+- **doc/**: Documentation.
+- **bin/**: Executables.
+
+## 📄 License
+
+This project is licensed under the MIT License. See the `LICENSE` file for details.
+
+**Justification:** The license choice was validated by scanning the codebase with `scancode-toolkit`, ensuring no conflicting proprietary code exists. The detailed scan results can be found in `scan_results.json`.

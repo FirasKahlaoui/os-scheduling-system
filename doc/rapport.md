@@ -14,10 +14,12 @@ The project is structured in a modular way to facilitate the addition of new pol
 
 ### File Structure
 
-- **src/**: Contains the main source code (main, scheduler, display).
+- **src/**: Contains the main source code and header files (main, scheduler, display, utils, parser, process).
 - **policies/**: Contains the implementation of scheduling algorithms. Each `.c` file implements a specific policy.
-- **include/**: Header files.
 - **config_examples/**: Configuration files to test the simulator.
+- **doc/**: Documentation files, including this report and code documentation.
+- **bin/**: Compiled executable.
+- **obj/**: Object files.
 
 ### Data Structures
 
@@ -45,6 +47,11 @@ The main structure is `process_t`, defined in `process.h`. It contains all the i
 
 - **Principle**: The process with the highest priority (highest value) is executed. If a new higher priority process arrives, the current process is interrupted.
 - **Implementation**: At each time unit, the scheduler checks all ready processes and selects the one with the highest priority.
+
+### Multilevel Queue (with Aging)
+
+- **Principle**: Processes are managed in multiple queues based on priority. To prevent starvation of lower-priority processes, an aging mechanism is used.
+- **Implementation**: Uses 4 dynamic priority levels. A process's priority increases by 1 for every 10 time units it spends waiting in the queue.
 
 ## 4. Graphical Interface (ncurses)
 
@@ -85,3 +92,7 @@ An advanced interface was developed using the `ncurses` library. It offers:
 ## 7. Conclusion
 
 This project allowed us to put into practice the theoretical concepts of operating systems. The modular architecture makes it easy to extend the simulator with other algorithms (e.g., SJF, Multilevel Feedback Queue).
+
+## 8. Licensing and Copyright
+
+The project is licensed under the MIT License. This choice is justified by a code scan performed using `scancode-toolkit` (version 32.4.1), which confirmed that the codebase contains no existing third-party licenses or copyright notices that would conflict with MIT. The scan results are available in `scan_results.json`.

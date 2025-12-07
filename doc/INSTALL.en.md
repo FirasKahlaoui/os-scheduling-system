@@ -56,7 +56,15 @@ Run the scheduler with a configuration file. You will be prompted to select a sc
 1. **FIFO**: First-In-First-Out scheduling.
 2. **Round-Robin**: Time-slice based scheduling (requires quantum).
 3. **Preemptive Priority**: Priority-based scheduling with preemption.
-4. **Multilevel**: (Experimental) Multi-level queue scheduling.
+4. **Multilevel**: Multi-level queue scheduling.
+5. **Help**: Help menu.
+
+**Available Commands:**
+
+- `1-4`: Select a scheduling policy.
+- `help <policy>`: Get details about a specific policy (e.g., `help fifo`).
+- `? <policy>`: Short for help.
+- `exit`: Exit the program.
 
 ### Command Line Mode
 
