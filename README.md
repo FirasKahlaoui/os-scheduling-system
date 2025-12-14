@@ -28,11 +28,19 @@ This project implements core scheduling algorithms including **FIFO**, **Round-R
 
 ### Application Launch
 
-![Application Launch](doc/latex/img/AppLaunch.png)
+![Application Launch](doc/img/AppLaunch.png)
 
 ### Real-time Graphical Dashboard
 
-![Dashboard](doc/latex/img/Graphical_interface.png)
+![Dashboard](doc/img/Graphical_interface.png)
+
+---
+
+## 🏗️ System Architecture
+
+The system is designed with a modular architecture, separating the core scheduling logic from the user interface and input parsing.
+
+![System Architecture](doc/img/System%20Architecture%20Diagram.png)
 
 ---
 
