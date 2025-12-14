@@ -62,7 +62,7 @@ void set_visual_mode(bool enable) {
 void update_visualization(process_t processes[], int n, int current_time, int running_idx) {
     if (visual_mode) {
         update_graphical_display(processes, n, current_time, running_idx);
-        usleep(200000); 
+        sleep(200000); 
     }
 }
 
