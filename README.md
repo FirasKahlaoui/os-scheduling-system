@@ -36,6 +36,14 @@ This project implements core scheduling algorithms including **FIFO**, **Round-R
 
 ---
 
+## 🏗️ System Architecture
+
+The system is designed with a modular architecture, separating the core scheduling logic from the user interface and input parsing.
+
+![System Architecture](doc/img/System%20Architecture%20Diagram.png)
+
+---
+
 ## 🚀 Installation
 
 ### Prerequisites
