@@ -28,11 +28,11 @@ This project implements core scheduling algorithms including **FIFO**, **Round-R
 
 ### Application Launch
 
-![Application Launch](doc/latex/img/AppLaunch.png)
+![Application Launch](doc/img/AppLaunch.png)
 
 ### Real-time Graphical Dashboard
 
-![Dashboard](doc/latex/img/Graphical_interface.png)
+![Dashboard](doc/img/Graphical_interface.png)
 
 ---
 
