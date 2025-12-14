@@ -31,6 +31,14 @@ void init_graphical_display() {
     init_pair(COLOR_BORDER, COLOR_WHITE, -1);
     init_pair(COLOR_HEADER, COLOR_BLACK, COLOR_WHITE);
     init_pair(COLOR_IDLE, COLOR_MAGENTA, -1);
+
+    // Process colors for Gantt chart
+    init_pair(10, COLOR_WHITE, COLOR_BLUE);
+    init_pair(11, COLOR_WHITE, COLOR_MAGENTA);
+    init_pair(12, COLOR_BLACK, COLOR_CYAN);
+    init_pair(13, COLOR_BLACK, COLOR_GREEN);
+    init_pair(14, COLOR_BLACK, COLOR_YELLOW);
+    init_pair(15, COLOR_WHITE, COLOR_RED);
 }
 
 void draw_progress_bar(int y, int x, int width, int percentage, int color_pair) {
@@ -188,30 +196,49 @@ void update_graphical_display(process_t processes[], int n, int current_time, in
 
     
     int gantt_y = cpu_y + 6;
-    draw_box_custom(gantt_y, 1, 5, width - 2, "Gantt Timeline");
+    draw_box_custom(gantt_y, 1, 9, width - 2, "Gantt Timeline");
     
+    int max_width = width - 6;
     int start_idx = 0;
-    if (history_count > (width - 6)) {
-        start_idx = history_count - (width - 6);
+    if (history_count > max_width) {
+        start_idx = history_count - max_width;
     }
 
     for(int i = start_idx; i < history_count; i++) {
-        int color = COLOR_IDLE;
-        if (strcmp(gantt_history[i], "_") != 0) {
-            
-            
-            color = COLOR_RUNNING;
+        int color_pair = COLOR_IDLE;
+        char display_char = ' ';
+        
+        if (strcmp(gantt_history[i], "_") == 0) {
+             color_pair = COLOR_IDLE;
+             display_char = '.';
+        } else {
+             int p_idx = 0;
+             for(int k=0; k<n; k++) {
+                 if(strcmp(processes[k].name, gantt_history[i]) == 0) {
+                     p_idx = k;
+                     break;
+                 }
+             }
+             color_pair = 10 + (p_idx % 6);
+             display_char = ' ';
         }
         
-        attron(COLOR_PAIR(color));
-        mvaddch(gantt_y + 2, 3 + (i - start_idx), '|');
-        attroff(COLOR_PAIR(color));
-        
+        attron(COLOR_PAIR(color_pair));
+        mvaddch(gantt_y + 2, 3 + (i - start_idx), display_char);
+        mvaddch(gantt_y + 3, 3 + (i - start_idx), display_char);
+        mvaddch(gantt_y + 4, 3 + (i - start_idx), display_char);
+        attroff(COLOR_PAIR(color_pair));
         
         if (i == start_idx || strcmp(gantt_history[i], gantt_history[i-1]) != 0) {
-             mvprintw(gantt_y + 1, 3 + (i - start_idx), "%s", gantt_history[i]);
+             if (strcmp(gantt_history[i], "_") != 0) {
+                 attron(A_BOLD);
+                 mvprintw(gantt_y + 1, 3 + (i - start_idx), "%s", gantt_history[i]);
+                 attroff(A_BOLD);
+             }
+             mvprintw(gantt_y + 6, 3 + (i - start_idx), "%d", i);
         }
     }
+    mvprintw(gantt_y + 6, 3 + (history_count - start_idx), "%d", history_count);
 
     refresh();
 }

@@ -30,9 +30,17 @@ $(OBJ_DIR)/%.o: $(POLICY_DIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 install:
-	@echo "Installing to ~/.local/bin"
-	@mkdir -p ~/.local/bin
-	cp $(EXEC) ~/.local/bin/scheduler
+	@if [ -w "/usr/local/bin" ]; then \
+		echo "Installing system-wide to /usr/local/bin..."; \
+		cp $(EXEC) /usr/local/bin/scheduler; \
+		echo "Installation successful."; \
+	else \
+		echo "Notice: No write access to /usr/local/bin (try 'sudo make install' for system-wide)."; \
+		echo "Falling back to local installation in ~/.local/bin..."; \
+		mkdir -p ~/.local/bin; \
+		cp $(EXEC) ~/.local/bin/scheduler; \
+		echo "Installation successful. Ensure ~/.local/bin is in your PATH."; \
+	fi
 
 clean:
 	rm -rf $(OBJ_DIR) $(BIN_DIR)
