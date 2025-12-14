@@ -3,6 +3,8 @@
 #include <string.h>
 #include <strings.h>
 #include <unistd.h>
+#include <dlfcn.h>
+#include <ctype.h>
 #include "scheduler.h"
 #include "display.h"
 
@@ -11,17 +13,43 @@ static schedule_func_t current_policy = NULL;
 static bool visual_mode = false;
 
 void init_scheduler(const char *policy_name) {
-    if (strcasecmp(policy_name, "FIFO") == 0) {
+    char func_name[100];
+    char lower_policy[50];
+    int i = 0;
+    
+    // Convert policy name to lowercase to match convention (e.g. "FIFO" -> "fifo")
+    while(policy_name[i] && i < 49) {
+        lower_policy[i] = tolower(policy_name[i]);
+        i++;
+    }
+    lower_policy[i] = '\0';
+
+    // Construct function name: [policy]_schedule
+    snprintf(func_name, sizeof(func_name), "%s_schedule", lower_policy);
+
+    // Open the main executable to search for symbols
+    void *handle = dlopen(NULL, RTLD_LAZY);
+    if (!handle) {
+        fprintf(stderr, "Error accessing symbols: %s\n", dlerror());
         current_policy = fifo_schedule;
-    } else if (strcasecmp(policy_name, "RoundRobin") == 0) {
-        current_policy = round_robin_schedule;
-    } else if (strcasecmp(policy_name, "Priority") == 0) {
-        current_policy = priority_schedule;
-    } else if (strcasecmp(policy_name, "Multilevel") == 0) {
-        current_policy = multilevel_schedule;
-    } else {
+        return;
+    }
+
+    // Look up the function
+    current_policy = (schedule_func_t)dlsym(handle, func_name);
+    
+    if (!current_policy) {
+        // Try original name if lowercase failed (just in case)
+        snprintf(func_name, sizeof(func_name), "%s_schedule", policy_name);
+        current_policy = (schedule_func_t)dlsym(handle, func_name);
+    }
+
+    if (!current_policy) {
+        fprintf(stderr, "Warning: Policy function '%s_schedule' not found. Defaulting to FIFO.\n", lower_policy);
         current_policy = fifo_schedule;
     }
+    
+    dlclose(handle);
 }
 
 void set_visual_mode(bool enable) {

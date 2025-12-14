@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c11 -Iinclude -Isrc
-LDFLAGS = -lncurses
+LDFLAGS = -lncurses -ldl -rdynamic
 
 SRC_DIR = src
 POLICY_DIR = policies
