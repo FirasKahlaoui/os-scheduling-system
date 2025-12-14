@@ -6,6 +6,7 @@
 #include "parser.h"
 #include "scheduler.h"
 #include "display.h"
+#include "utils.h"
 
 void print_help(const char *topic) {
     if (topic == NULL || strlen(topic) == 0) {
@@ -30,16 +31,20 @@ void print_help(const char *topic) {
     printf("\n");
 }
 
-void print_menu() {
-    printf("\n=== Scheduler Menu ===\n");
-    printf("  1) FIFO (First-In-First-Out)\n");
-    printf("  2) Round-Robin\n");
-    printf("  3) Preemptive Priority\n");
-    printf("  4) Multilevel\n");
-    printf("  ?) Help\n");
+void print_menu(char policies[][POLICY_NAME_LENGTH], int count) {
+    printf("\n\033[1;34m+------------------------------------------+\033[0m\n");
+    printf("\033[1;34m|\033[0m           \033[1;33mScheduler Menu\033[0m                 \033[1;34m|\033[0m\n");
+    printf("\033[1;34m+------------------------------------------+\033[0m\n");
+    for (int i = 0; i < count; i++) {
+        printf("\033[1;34m|\033[0m  \033[1;32m%d)\033[0m %-36s \033[1;34m|\033[0m\n", i + 1, policies[i]);
+    }
+    printf("\033[1;34m|\033[0m  \033[1;32m?)\033[0m %-36s \033[1;34m|\033[0m\n", "Help");
+    printf("\033[1;34m+------------------------------------------+\033[0m\n");
 }
 
 int main(int argc, char *argv[]) {
+    print_welcome_screen();
+
     if (argc < 2) {
         fprintf(stderr, "Usage: %s <config_file> [policy] [quantum]\n", argv[0]);
         return EXIT_FAILURE;
@@ -48,6 +53,19 @@ int main(int argc, char *argv[]) {
     int num_processes;
     process_t *processes = parse_config(argv[1], &num_processes);
     if (!processes) return EXIT_FAILURE;
+
+    char policies[10][POLICY_NAME_LENGTH];
+    int policy_count = 0;
+    list_scheduling_policies(policies, &policy_count);
+
+    if (policy_count == 0) {
+        // Fallback if directory reading fails
+        strcpy(policies[0], "FIFO");
+        strcpy(policies[1], "RoundRobin");
+        strcpy(policies[2], "Priority");
+        strcpy(policies[3], "Multilevel");
+        policy_count = 4;
+    }
 
     char policy[20] = "FIFO";
     int quantum = 2;
@@ -63,7 +81,7 @@ int main(int argc, char *argv[]) {
         int valid_choice = 0;
 
         while (!valid_choice) {
-            print_menu();
+            print_menu(policies, policy_count);
             printf("Enter choice > ");
             
             if (!fgets(input, sizeof(input), stdin)) {
@@ -75,8 +93,8 @@ int main(int argc, char *argv[]) {
             input[strcspn(input, "\n")] = 0;
             
             if (strlen(input) == 0) {
-                printf("Defaulting to FIFO.\n");
-                choice = 1;
+                printf("Defaulting to %s.\n", policies[0]);
+                strcpy(policy, policies[0]);
                 valid_choice = 1;
                 continue;
             }
@@ -110,27 +128,21 @@ int main(int argc, char *argv[]) {
             
             char *end;
             long val = strtol(input, &end, 10);
-            if (end != input && *end == '\0' && val >= 1 && val <= 4) {
+            if (end != input && *end == '\0' && val >= 1 && val <= policy_count) {
                 choice = (int)val;
+                strcpy(policy, policies[choice - 1]);
                 valid_choice = 1;
             } else {
                 printf("Invalid selection. Type '?' for help.\n");
             }
         }
 
-        switch(choice) {
-            case 1: strcpy(policy, "FIFO"); break;
-            case 2: 
-                strcpy(policy, "RoundRobin"); 
-                printf("Enter quantum (default 2): ");
-                if (fgets(input, sizeof(input), stdin)) {
-                    int q = atoi(input);
-                    if (q > 0) quantum = q;
-                }
-                break;
-            case 3: strcpy(policy, "Priority"); break;
-            case 4: strcpy(policy, "Multilevel"); break;
-            default: strcpy(policy, "FIFO"); break;
+        if (strcasecmp(policy, "RoundRobin") == 0 || strcasecmp(policy, "round_robin") == 0) {
+            printf("Enter quantum (default 2): ");
+            if (fgets(input, sizeof(input), stdin)) {
+                int q = atoi(input);
+                if (q > 0) quantum = q;
+            }
         }
 
         printf("Enable graphical visualization? (y/n): ");

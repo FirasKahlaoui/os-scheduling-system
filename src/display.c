@@ -72,6 +72,23 @@ void draw_box_custom(int y, int x, int h, int w, const char* title) {
     attroff(COLOR_PAIR(COLOR_BORDER));
 }
 
+void print_welcome_screen() {
+    printf("\033[1;36m"); // Set color to Bold Cyan
+    printf("================================================================================\n");
+    printf("  _______ _             _____           _                     \n");
+    printf(" |__   __| |           / ____|         | |                    \n");
+    printf("    | |  | |__   ___  | (___  _   _  __| | ___   ___ _ __ ___ \n");
+    printf("    | |  | '_ \\ / _ \\  \\___ \\| | | |/ _` |/ _ \\ / _ \\ '__/ __|\n");
+    printf("    | |  | | | |  __/  ____) | |_| | (_| | (_) |  __/ |  \\__ \\\n");
+    printf("    |_|  |_| |_|\\___| |_____/ \\__,_|\\__,_|\\___/ \\___|_|  |___/\n");
+    printf("                                                              \n");
+    printf("================================================================================\n");
+    printf("       OS Scheduling System - v1.0\n");
+    printf("================================================================================\n");
+    printf("\033[0m"); // Reset color
+    printf("\n");
+}
+
 void update_graphical_display(process_t processes[], int n, int current_time, int running_idx) {
     
     if (current_time > last_recorded_time) {
